@@ -1,0 +1,52 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup_and_test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # Step 2: Set up Python
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      # Step 3: Set up Git configuration (for commit pushing)
+      - name: Configure Git User
+        run: |
+          git config --global user.name "Keerthi-creator-hash"
+          git config --global user.email "keerthi@stavir.com"
+      
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+        
+      # Step 5: Pull remote changes (handling unrelated histories)
+      - name: Pull remote changes with unrelated histories
+        run: |
+          git pull origin main --allow-unrelated-histories
+      
+      # Step 6: Run the tests
+      - name: Run pytest
+        run: |
+          pytest tests/test_app.py || exit 1  # Ensure tests are run and fail if they do
+      
+      # Step 7: Push changes if any updates were made
+      - name: Push changes to GitHub
+        run: |
+          git push origin main
