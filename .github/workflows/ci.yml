@@ -46,7 +46,4 @@ jobs:
         run: |
           export PYTHONPATH=$(pwd) && pytest tests/test_app.py   
           
-      # Step 7: Push changes if any updates were made
-      - name: Push changes to GitHub
-        run: |
-          git push origin main
+     
